@@ -48,9 +48,10 @@ class Coek(CMakePackage):
     depends_on("cmake@3.13.0:", type="build")
     depends_on("catch2@2.13.6", when="+tests")
     with when("+pycoek"):
-        depends_on("python")
+        depends_on("py-pip", type="build")
         depends_on("py-pybind11@2.10.4")
-    depends_on("gurobi", when="+gurobi")
+        extends("python")
+    #depends_on("gurobi", when="+gurobi")
     depends_on("fmt@8.0.1")
     depends_on("rapidjson@1.1.0")
     #with when("+tpls"):
@@ -84,10 +85,14 @@ class Coek(CMakePackage):
         if self.spec.satisfies("+pycoek"):
             args.append("-Dwith_python=ON")
             args.append("-Dwith_pybind11=ON")
-        if self.spec.satisfies("+gurobi"):
-            args.append("-Dwith_gurobi=ON")
         if self.spec.satisfies("+compact"):
             args.append("-Dwith_compact=ON")
+
+        #
+        # External gurobi dependency found by CMAKE, not spack
+        #
+        if self.spec.satisfies("+gurobi"):
+            args.append("-Dwith_gurobi=ON")
 
         #if "+pic" in spec:
         #    args.extend(
