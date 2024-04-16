@@ -1,8 +1,8 @@
 from spack.package import *
 
 
-class Coek(CMakePackage):
-    """coek optimization monorepo, which installs libcoek, libpycoek, and various
+class Coek(CMakePackage, PythonExtension):
+    """coek optimization monorepo, which installs libcoek, pycoek, and various
     python packages (especially poek).
     """
 
@@ -32,7 +32,7 @@ class Coek(CMakePackage):
     variant("pic", default=True, description="Build position-independent code")
 
     variant("tests", default=False, description="Build coek test executables")
-    variant("pycoek", default=False, description="Build pycoek and install coek python libraries")
+    variant("python", default=False, description="Build pycoek and install coek python libraries")
     variant("compact", default=False, description="Build compact expressions in coek")
 
     variant("tpls", default=True, description="Build with all dependencies")
@@ -44,14 +44,12 @@ class Coek(CMakePackage):
     #gcov
     #gprof
     #caliper
-    #caliper
     depends_on("cmake@3.13.0:", type="build")
     depends_on("catch2@2.13.6", when="+tests")
-    with when("+pycoek"):
+    with when("+python"):
         depends_on("py-pip", type="build")
         depends_on("py-pybind11@2.10.4")
         extends("python")
-    #depends_on("gurobi", when="+gurobi")
     depends_on("fmt@8.0.1")
     depends_on("rapidjson@1.1.0")
     #with when("+tpls"):
@@ -62,15 +60,23 @@ class Coek(CMakePackage):
     #with when("+asl"):
     #    depends_on("asl")
 
+    def setup_run_environment(self, env):
+        if '+python' in self.spec:
+            env.append_path('PYTHONPATH', self.spec.prefix.python)
+
     def cmake_args(self):
         spec = self.spec
         args = []
+
+        args.append("-Dwith_spack=ON")
 
         args.append("-Dwith_fmtlib=ON")
         args.append("-Dwith_rapidjson=ON")
 
         if self.spec.satisfies("+shared"):
-            args.append("-Dbuild_shared_libs=ON")
+            args.append("-DBUILD_SHARED_LIBS=ON")
+        elif self.spec.satisfies("-shared"):
+            args.append("-DBUILD_SHARED_LIBS=OFF")
         if self.spec.satisfies("+debug"):
             args.append("-Dwith_debug=ON")
         if self.spec.satisfies("+verbose"):
@@ -82,7 +88,7 @@ class Coek(CMakePackage):
         if self.spec.satisfies("+tests"):
             args.append("-Dwith_tests=ON")
             args.append("-Dwith_catch2=ON")
-        if self.spec.satisfies("+pycoek"):
+        if self.spec.satisfies("+python"):
             args.append("-Dwith_python=ON")
             args.append("-Dwith_pybind11=ON")
         if self.spec.satisfies("+compact"):
@@ -94,18 +100,10 @@ class Coek(CMakePackage):
         if self.spec.satisfies("+gurobi"):
             args.append("-Dwith_gurobi=ON")
 
-        #if "+pic" in spec:
-        #    args.extend(
-        #        [
-        #            "-DCMAKE_C_FLAGS={0}".format(self.compiler.cc_pic_flag),
-        #            "-DCMAKE_CXX_FLAGS={0}".format(self.compiler.cxx_pic_flag),
-        #        ]
-        #    )
-
-        args.append("-DCMAKE_CXX_STANDARD={0}".format(spec.variants["cxxstd"].value))
         # Require standard at configure time to guarantee the
         # compiler supports the selected standard.
         args.append("-DCMAKE_CXX_STANDARD_REQUIRED=ON")
+        args.append("-DCMAKE_CXX_STANDARD={0}".format(spec.variants["cxxstd"].value))
 
         ## Don't build tests
         #args.append(self.define("FMT_TEST", self.run_tests))
