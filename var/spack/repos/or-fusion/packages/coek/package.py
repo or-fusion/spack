@@ -62,6 +62,7 @@ class Coek(CMakePackage, PythonExtension):
 
     def setup_run_environment(self, env):
         if self.spec.satisfies("+python"):
+            # Extend PYTHONPATH to find the pycoek shared object libraries
             env.append_path("PYTHONPATH", self.spec.prefix.lib)
             env.append_path("PYTHONPATH", self.spec.prefix.lib64)
 
