@@ -61,8 +61,9 @@ class Coek(CMakePackage, PythonExtension):
     #    depends_on("asl")
 
     def setup_run_environment(self, env):
-        if '+python' in self.spec:
-            env.append_path('PYTHONPATH', self.spec.prefix.python)
+        if self.spec.satisfies("+python"):
+            env.append_path("PYTHONPATH", self.spec.prefix.lib)
+            env.append_path("PYTHONPATH", self.spec.prefix.lib64)
 
     def cmake_args(self):
         spec = self.spec
