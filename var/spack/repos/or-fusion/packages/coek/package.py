@@ -48,7 +48,7 @@ class Coek(CMakePackage, PythonExtension):
     #gprof
     #caliper
     depends_on("cmake@3.13.0:", type="build")
-    depends_on("catch2@2.13.6", when="+tests")
+    depends_on("catch2@3.4.0:", when="+tests")
     with when("+python"):
         depends_on("py-pip", type="build")
         depends_on("py-pybind11@2.10.4")
