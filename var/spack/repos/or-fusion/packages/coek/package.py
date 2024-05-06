@@ -13,7 +13,7 @@ class Coek(CMakePackage, PythonExtension):
 
     homepage = "https://github.com/sandialabs/coek"
     url = "https://github.com/sandialabs/coek/archive/refs/tags/1.4.0.tar.gz"
-    git = "git@github.com:sandialabs/coek.git"
+    git = "https://github.com/sandialabs/coek.git"
     maintainers("whart222")
 
     license("BSD")
