@@ -41,6 +41,7 @@ class Coek(CMakePackage, PythonExtension):
 
     variant("openmp", default=True, description="Build with openmp")
     variant("gurobi", default=False, description="Build with Gurobi optimization library")
+    variant("highs", default=True, description="Build with Highs optimization library")
     variant("cppad", default=False, description="Build with the CppAD library")
     variant("asl", default=False, description="Build with the ASL library")
 
@@ -55,6 +56,8 @@ class Coek(CMakePackage, PythonExtension):
         extends("python")
     depends_on("fmt@8.0.1")
     depends_on("rapidjson@1.1.0")
+
+    depends_on("highs", when="+highs")
 
     with when("+cppad"):
         depends_on("cppad@20240000.4:")
@@ -109,6 +112,8 @@ class Coek(CMakePackage, PythonExtension):
 
         if self.spec.satisfies("+cppad"):
             args.append("-Dwith_cppad=ON")
+        if self.spec.satisfies("+highs"):
+            args.append("-Dwith_highs=ON")
         #
         # External gurobi dependency found by CMAKE, not spack
         #
