@@ -45,9 +45,6 @@ class Coek(CMakePackage, PythonExtension):
     variant("cppad", default=False, description="Build with the CppAD library")
     variant("asl", default=False, description="Build with the ASL library")
 
-    #gcov
-    #gprof
-    #caliper
     depends_on("cmake@3.13.0:", type="build")
     depends_on("catch2@3.4.0:", when="+tests")
     with when("+python"):
