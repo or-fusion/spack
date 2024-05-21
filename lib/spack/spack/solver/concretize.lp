@@ -1424,6 +1424,7 @@ opt_criterion(73, "deprecated versions used").
 #minimize{
     1@73+Priority,PackageNode
     : attr("deprecated", PackageNode, _),
+      not external(PackageNode),
       build_priority(PackageNode, Priority)
 }.
 
@@ -1431,11 +1432,11 @@ opt_criterion(73, "deprecated versions used").
 % 1. Version weight
 % 2. Number of variants with a non default value, if not set
 % for the root package.
-opt_criterion(70, "version weight").
+opt_criterion(70, "version badness (roots)").
 #minimize{ 0@270: #true }.
 #minimize{ 0@70: #true }.
 #minimize {
-    Weight@70+Priority
+    Weight@70+Priority,PackageNode
     : attr("root", PackageNode),
       version_weight(PackageNode, Weight),
       build_priority(PackageNode, Priority)
@@ -1525,13 +1526,14 @@ opt_criterion(30, "non-preferred OS's").
 }.
 
 % Choose more recent versions for nodes
-opt_criterion(25, "version badness").
+opt_criterion(25, "version badness (non roots)").
 #minimize{ 0@225: #true }.
 #minimize{ 0@25: #true }.
 #minimize{
     Weight@25+Priority,node(X, Package)
     : version_weight(node(X, Package), Weight),
       build_priority(node(X, Package), Priority),
+      not attr("root", node(X, Package)),
       not runtime(Package)
 }.
 
