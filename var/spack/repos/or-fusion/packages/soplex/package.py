@@ -7,8 +7,7 @@ from spack.package import *
 
 
 class Soplex(CMakePackage):
-    """Soplex optimization solver.
-    """
+    """Soplex optimization solver."""
 
     homepage = "https://github.com/scipopt/soplex"
     url = "https://github.com/scipopt/soplex/archive/refs/tags/release-701.tar.gz"
@@ -23,7 +22,6 @@ class Soplex(CMakePackage):
     variant("boost", default=False, description="Build with Boost")
 
     def cmake_args(self):
-        spec = self.spec
         args = []
 
         if self.spec.satisfies("+gmp"):
