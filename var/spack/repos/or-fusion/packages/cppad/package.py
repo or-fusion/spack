@@ -13,6 +13,8 @@ class Cppad(CMakePackage):
     url = "https://github.com/coin-or/CppAD/archive/refs/tags/20240000.4.tar.gz"
     git = "https://github.com/coin-or/CppAD.git"
 
+    maintainers("whart222")
+
     version("develop", branch="master")
     version(
         "20240000.4", sha256="0dfc1e30b32d5dd3086ee3adb6d2746a019e9d670b644c4d5ec1df3c35dd1fe5"
